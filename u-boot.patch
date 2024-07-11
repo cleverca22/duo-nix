@@ -1,0 +1,39 @@
+diff --git a/u-boot-2021.10/arch/riscv/Makefile b/u-boot-2021.10/arch/riscv/Makefile
+index 0b80eb8d8..7814d02bb 100644
+--- a/u-boot-2021.10/arch/riscv/Makefile
++++ b/u-boot-2021.10/arch/riscv/Makefile
+@@ -24,7 +24,7 @@ ifeq ($(CONFIG_CMODEL_MEDANY),y)
+ 	CMODEL = medany
+ endif
+ 
+-ARCH_FLAGS = -march=$(ARCH_BASE)$(ARCH_A)$(ARCH_C) -mabi=$(ABI) \
++ARCH_FLAGS = -march=$(ARCH_BASE)$(ARCH_A)$(ARCH_C)_zicsr_zifencei -mabi=$(ABI) \
+ 	     -mcmodel=$(CMODEL)
+ 
+ PLATFORM_CPPFLAGS	+= $(ARCH_FLAGS)
+diff --git a/u-boot-2021.10/arch/riscv/config.mk b/u-boot-2021.10/arch/riscv/config.mk
+index 5c36c2e90..54c6bc71d 100644
+--- a/u-boot-2021.10/arch/riscv/config.mk
++++ b/u-boot-2021.10/arch/riscv/config.mk
+@@ -30,7 +30,7 @@ CONFIG_STANDALONE_LOAD_ADDR ?= 0x00000000
+ PLATFORM_CPPFLAGS	+= -ffixed-gp -fpic
+ PLATFORM_RELFLAGS	+= -fno-common -gdwarf-2 -ffunction-sections \
+ 			   -fdata-sections
+-LDFLAGS_u-boot		+= --gc-sections -static -pie
++LDFLAGS_u-boot		+= --gc-sections -static -pie --no-warn-rwx-segments
+ 
+ EFI_CRT0		:= crt0_riscv_efi.o
+ EFI_RELOC		:= reloc_riscv_efi.o
+diff --git a/u-boot-2021.10/include/command.h b/u-boot-2021.10/include/command.h
+index 137cfbc32..8981c60a3 100644
+--- a/u-boot-2021.10/include/command.h
++++ b/u-boot-2021.10/include/command.h
+@@ -231,7 +231,7 @@ enum command_ret_t {
+  *			number of ticks the command took to complete.
+  * @return 0 if the command succeeded, 1 if it failed
+  */
+-int cmd_process(int flag, int argc, char *const argv[], int *repeatable,
++enum command_ret_t cmd_process(int flag, int argc, char *const argv[], int *repeatable,
+ 		unsigned long *ticks);
+ 
+ void fixup_cmdtable(struct cmd_tbl *cmdtp, int size);

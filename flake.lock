@@ -1,0 +1,42 @@
+{
+  "nodes": {
+    "duo-buildroot-sdk": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1719906963,
+        "narHash": "sha256-f/9aoUaBoWoMRsTotDBOnWiKq3eEagl+6Dg1PD3GF9I=",
+        "owner": "milkv-duo",
+        "repo": "duo-buildroot-sdk",
+        "rev": "77c7d953efe67d9d9742ebda62c629be83d4d991",
+        "type": "github"
+      },
+      "original": {
+        "owner": "milkv-duo",
+        "repo": "duo-buildroot-sdk",
+        "type": "github"
+      }
+    },
+    "nixpkgs": {
+      "locked": {
+        "lastModified": 1720498663,
+        "narHash": "sha256-juqJkkdAt44mOfA43q1qUHn7iWoK++81lR8Mh7N/EF8=",
+        "owner": "NixOS",
+        "repo": "nixpkgs",
+        "rev": "106e145e1d4583d1e2bb20e54947d15ad55e75e1",
+        "type": "github"
+      },
+      "original": {
+        "id": "nixpkgs",
+        "type": "indirect"
+      }
+    },
+    "root": {
+      "inputs": {
+        "duo-buildroot-sdk": "duo-buildroot-sdk",
+        "nixpkgs": "nixpkgs"
+      }
+    }
+  },
+  "root": "root",
+  "version": 7
+}
