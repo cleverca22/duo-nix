@@ -1,3 +1,23 @@
+diff --git a/opensbi/lib/sbi/sbi_init.c b/opensbi/lib/sbi/sbi_init.c
+index 3f44a2b87..d72601614 100644
+--- a/opensbi/lib/sbi/sbi_init.c
++++ b/opensbi/lib/sbi/sbi_init.c
+@@ -95,6 +95,15 @@ static void sbi_boot_print_general(struct sbi_scratch *scratch)
+ 	sbi_printf("Runtime SBI Version       : %d.%d\n",
+ 		   sbi_ecall_version_major(), sbi_ecall_version_minor());
+ 	sbi_printf("\n");
++
++        for (uint64_t addr = 0x04400000; addr < (0x04400000 + (64*1024)); addr += 16) {
++          sbi_printf("%08lx  ", addr);
++          for (uint64_t offset = 0; offset < 16; offset += 1) {
++            uint8_t byte = *(uint8_t*)(addr + offset);
++            sbi_printf("%02x ", byte);
++          }
++          sbi_printf("\n");
++        }
+ }
+ 
+ static void sbi_boot_print_domains(struct sbi_scratch *scratch)
 diff --git a/opensbi/lib/utils/reset/fdt_reset_thead.c b/opensbi/lib/utils/reset/fdt_reset_thead.c
 index 95f8c369c..c75776a90 100644
 --- a/opensbi/lib/utils/reset/fdt_reset_thead.c

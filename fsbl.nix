@@ -1,6 +1,8 @@
-{ runCommand, pkgsCross, duo-buildroot-sdk, memmap, python3, opensbi, uboot }:
+{ runCommand, pkgsCross, duo-buildroot-sdk, memmap, python3, opensbi, uboot, lib }:
 
-runCommand "fsbl" {
+let
+  enableRtos = false;
+in runCommand "fsbl" {
   nativeBuildInputs = [
     pkgsCross.riscv64.stdenv.cc
     python3
@@ -21,10 +23,21 @@ runCommand "fsbl" {
 
   export LOADER_2ND_PATH=${uboot}/u-boot.bin
 
+  ${lib.optionalString enableRtos ''
+    export BLCP_2ND_PATH=
+    export RTOS_DUMP_PRINT_ENABLE=y
+    export RTOS_DUMP_PRINT_SZ_IDX=13
+    export RTOS_FAST_IMAGE_TYPE=0
+    export RTOS_ENABLE_FREERTOS=y
+  ''}
+  export RTOS_ENABLE_FREERTOS=y
+  export RTOS_FAST_IMAGE_TYPE=0
+  export RTOS_DUMP_PRINT_SZ_IDX=13
+
   export NIX_HARDENING_ENABLE=
   CHIP_ARCH=CV180X make -C fsbl/ O=build CROSS_COMPILE=riscv64-unknown-linux-gnu- ARCH=riscv BOOT_CPU=riscv V=1
 
   ls -ltrh fsbl/build/
   mkdir -p $out
-  cp fsbl/build/fip.bin $out/
+  cp fsbl/build/{fip.bin,bl2.bin} $out/
 ''

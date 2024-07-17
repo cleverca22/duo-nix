@@ -1,0 +1,68 @@
+diff --git a/freertos/cvitek/arch/riscv64/src/cache.c b/freertos/cvitek/arch/riscv64/src/cache.c
+index 0ae614578..14ad5d7b3 100644
+--- a/freertos/cvitek/arch/riscv64/src/cache.c
++++ b/freertos/cvitek/arch/riscv64/src/cache.c
+@@ -57,14 +57,14 @@ void flush_dcache_range(uintptr_t start, size_t size)
+ void enable_dcache(void)
+ {
+ 	asm volatile(
+-		"csrs mhcr, %0;" ::"rI"(0x2)
++		"csrs 0x7c1, %0;" ::"rI"(0x2)
+ 	);
+ }
+ 
+ void disable_dcache(void)
+ {
+ 	asm volatile(
+-		"csrc mhcr, %0;" ::"rI"(0x2)
++		"csrc 0x7c1, %0;" ::"rI"(0x2)
+ 	);
+ }
+ 
+diff --git a/freertos/cvitek/arch/riscv64/src/start.S b/freertos/cvitek/arch/riscv64/src/start.S
+index d3012ea07..5c46792eb 100644
+--- a/freertos/cvitek/arch/riscv64/src/start.S
++++ b/freertos/cvitek/arch/riscv64/src/start.S
+@@ -82,13 +82,13 @@ _start:
+ #ifndef RISCV_QEMU
+ 	// invalidate all memory for BTB,BHT,DCACHE,ICACHE
+ 	li x3, 0x30013
+-	csrs mcor, x3
++	csrs 0x7c2, x3
+ 	// enable ICACHE,DCACHE,BHT,BTB,RAS,WA
+ 	li x3, 0x7f
+-	csrs mhcr, x3
++	csrs 0x7c1, x3
+ 	// enable data_cache_prefetch, amr
+ 	li x3, 0x610c
+-	csrs mhint, x3 #mhint
++	csrs 0x7c5, x3 #mhint
+ #endif
+ 	# enable fp
+ 	li x3, 0x1 << 13
+diff --git a/freertos/cvitek/kernel/CMakeLists.txt b/freertos/cvitek/kernel/CMakeLists.txt
+index d94a96c65..d0c17b35f 100644
+--- a/freertos/cvitek/kernel/CMakeLists.txt
++++ b/freertos/cvitek/kernel/CMakeLists.txt
+@@ -11,7 +11,7 @@ set(TRACE_SOURCE ${TOP_DIR}/../Tracealyzer)
+ set(CMAKE_INSTALL_PREFIX ${TOP_DIR}/install)
+ set(CMAKE_INSTALL_INC_PREFIX ${TOP_DIR}/install/include)
+ 
+-set(SAFETY_FLAGS "-Wall -Wextra -fno-strict-aliasing -static --specs=nosys.specs -D__BUILD_RTOS_KERNEL__")
++set(SAFETY_FLAGS "-Wall -Wextra -fno-strict-aliasing -static -D__BUILD_RTOS_KERNEL__")
+ #set(SAFETY_FLAGS "-Werror -Wall -Wextra -fno-strict-aliasing")
+ set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${SAFETY_FLAGS}")
+ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${SAFETY_FLAGS}")
+diff --git a/freertos/cvitek/scripts/toolchain-riscv64-elf.cmake b/freertos/cvitek/scripts/toolchain-riscv64-elf.cmake
+index 66d150262..1f2bf1700 100644
+--- a/freertos/cvitek/scripts/toolchain-riscv64-elf.cmake
++++ b/freertos/cvitek/scripts/toolchain-riscv64-elf.cmake
+@@ -6,7 +6,7 @@ SET( CMAKE_SYSTEM_NAME Generic)
+ set( CMAKE_SYSTEM_PROCESSOR     riscv64 )
+ set( ARCH riscv64 )
+ #set( CROSS_COMPILE aarch64-linux-gnu-)
+-set( CROSS_COMPILE riscv64-unknown-elf-)
++set( CROSS_COMPILE riscv64-none-elf-)
+ 
+ set(CMAKE_C_COMPILER ${CROSS_COMPILE}gcc)
+ set(CMAKE_CXX_COMPILER ${CROSS_COMPILE}g++)

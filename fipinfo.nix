@@ -1,7 +1,9 @@
-{ runCommandCC }:
+{ runCommandCC, xz, enableDebugging }:
 
-runCommandCC "fipinfo" {}
+runCommandCC "fipinfo" {
+  buildInputs = [ (enableDebugging xz) ];
+}
 ''
   mkdir -p $out/bin/
-  $CC ${./fipinfo.c} -o $out/bin/fipinfo
+  $CC ${./fipinfo.c} -o $out/bin/fipinfo -llzma -g
 ''

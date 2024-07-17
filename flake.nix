@@ -11,7 +11,7 @@
       };
       pkgs = (nixpkgs.legacyPackages.x86_64-linux.extend ov).extend (import ./overlay.nix);
     in {
-      inherit (pkgs) tools chip_conf fip-simple memmap fsbl opensbi uboot fipinfo;
+      inherit (pkgs) tools chip_conf fip-simple memmap fsbl opensbi uboot fipinfo freertos fip;
     };
   };
 }

@@ -9,4 +9,6 @@ self: super: {
   opensbi = self.callPackage ./opensbi.nix {};
   uboot = self.callPackage ./uboot.nix {};
   fipinfo = self.callPackage ./fipinfo.nix {};
+  freertos = self.callPackage ./freertos.nix {};
+  fip = self.callPackage ./fip.nix {};
 }
